@@ -10,7 +10,7 @@
 ChatRoom class
 """
 
-def ChatRoomUser :
+class ChatRoomUser :
     def __init__(self) :
         self.no = -1 # -1 means not initialized
         self.name  = -1
@@ -20,12 +20,12 @@ def ChatRoomUser :
         if self.name == other.name :
             return True
         return False
-def ChatRoomMessage :
+class ChatRoomMessage :
     def __init__(self) :
         self.user = 0
         self.msg = 0
 
-def ChatRoom
+class ChatRoom() :
     def __init__(self) :
         self.title = "default chat room title"
         self.in_users = []

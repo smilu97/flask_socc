@@ -17,10 +17,12 @@ import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, abort, \
         render_template, flash
 from contextlib import closing
+import json
 
 #### Customs
 
 import ChatRoom
+import CRUDString
 
 DATABASE = '/tmp/soccFlask.db'
 DEBUG = True
@@ -48,21 +50,35 @@ def init_db() :
 def connect_db() :
     return sqlite3.connect(app.config['DATABASE'])
 
+
+
 ############## http
 
 @app.route('/', methods=['GET'])
 def firstPage() :
     return render_template('index.html')
 
+@app.route('/test/get/create/user', methods=['GET'])
+def testCreateUser() :
+    return render_template('test_createuser.html')
+
 ############# ajax
 
 @app.route('/api/get/userlist', methods=['GET'])
 def ApiGetUserlist() :
-    pass
+    cur = g.db.execute(CRUDString.ReadDB('users', ['no', 'name', 'id']))
+    rows = cur.fetchall()
+    return json.dumps(rows)
 
-@app.route('/api/post/create_user', methods=['POST'])
+@app.route('/api/post/create/user', methods=['POST'])
 def ApiPostCreateUser() :
-    pass
+    user_name = request.form['name']
+    user_id = request.form['id']
+    user_password = request.form['password']
+    cur = g.db.execute(CRUDString.CreateDB('users', ['name', 'id', 'password'], \
+        [user_name, user_id, user_password]))
+    g.db.commit()
+    return redirect('/')
 
 ###################### About Chat Room
 
@@ -80,5 +96,5 @@ def ApiGetEscapeChatRoom() :
 
 
 
-def __name__ == '__main__' :
+if __name__ == '__main__' :
     app.run(host='0.0.0.0')

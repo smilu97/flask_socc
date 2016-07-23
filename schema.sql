@@ -10,12 +10,12 @@
 
 
 drop table if exists users;
-drop table if exists posts
+drop table if exists posts;
 
 create table users(
     no integer primary key autoincrement,
     name string not null,
-    id string not null,
+    id string not null unique,
     password string not null
 );
 
