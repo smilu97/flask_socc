@@ -48,16 +48,34 @@ def init_db() :
 def connect_db() :
     return sqlite3.connect(app.config['DATABASE'])
 
-@app.route('/')
+############## http
+
+@app.route('/', methods=['GET'])
 def firstPage() :
     return render_template('index.html')
 
-@app.route('/api/get/userlist')
+############# ajax
+
+@app.route('/api/get/userlist', methods=['GET'])
 def ApiGetUserlist() :
     pass
 
-@app.route('/api/post/create_user')
+@app.route('/api/post/create_user', methods=['POST'])
 def ApiPostCreateUser() :
+    pass
+
+###################### About Chat Room
+
+@app.route('/api/post/post_message', methods=['POST'])
+def ApiPostPostMessage() :
+    pass
+
+@app.route('/api/get/EnterChatRoom', methods=['GET'])
+def ApiGetEnterChatRoom() :
+    pass
+
+@app.route('/api/get/EscapeChatRoom', methods=['GET'])
+def ApiGetEscapeChatRoom() :
     pass
 
 
