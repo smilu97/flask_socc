@@ -15,8 +15,9 @@ Python SOCC server program
 from __future__ import with_statement
 import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, abort, \
-        render_template, flash
+        render_template, flash, make_response
 from contextlib import closing
+import hashlib
 import json
 
 #### Customs
@@ -52,7 +53,7 @@ def connect_db() :
 
 
 
-############## http
+###################### http
 
 @app.route('/', methods=['GET'])
 def firstPage() :
@@ -62,13 +63,19 @@ def firstPage() :
 def testCreateUser() :
     return render_template('test_createuser.html')
 
-############# ajax
+@app.route('/test/get/login', methods=['GET'])
+def testLogin() :
+    return render_template('test_login.html')
+
+###################### Ajax
 
 @app.route('/api/get/userlist', methods=['GET'])
 def ApiGetUserlist() :
     cur = g.db.execute(CRUDString.ReadDB('users', ['no', 'name', 'id']))
     rows = cur.fetchall()
     return json.dumps(rows)
+
+###################### Sign Up
 
 @app.route('/api/post/create/user', methods=['POST'])
 def ApiPostCreateUser() :
@@ -80,7 +87,30 @@ def ApiPostCreateUser() :
     g.db.commit()
     return redirect('/')
 
+###################### Login
+
+@app.route('/api/get/login/<string:id>/<string:password>', methods=['GET'])
+def Login(id, password) :
+    qs = CRUDString.ReadDB('users', ['no', 'name', 'id'], ['id', 'password'], \
+        [id, password])
+    cur = g.db.execute(qs)
+    rows = cur.fetchall()
+    if len(rows) == 1 :
+        user = rows[0]
+        session['user_no'] = user[0]
+        session['user_name'] = user[1]
+        session['user_id'] = user[2]
+        return 'success'
+    else :
+        return 'fail'
+
 ###################### About Chat Room
+
+@app.route('/api/post/create/chatroom', methods=['POST'])
+def ApiPostCreateChatRoom() :
+    if session.get('user_no', -1) == -1 :
+        return 'login needed'
+
 
 @app.route('/api/post/post_message', methods=['POST'])
 def ApiPostPostMessage() :
